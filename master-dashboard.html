@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Master Regulatory Dashboard | Together We End Poverty (TEP)</title>
+    <!-- Include Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary-green: #0f5132;
+            --accent-gold: #ffc107;
+            --light-bg: #f8f9fa;
+            --dark-footer: #0a3622;
+            --border-color: #dee2e6;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary-green), #198754);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-gold);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            margin-bottom: 0.5rem;
+        }
+        .marquee-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 20s linear infinite;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+        header h1 {
+            margin: 0.3rem 0;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+        }
+        header p {
+            margin: 0;
+            font-size: 1rem;
+            color: #e9ecef;
+        }
+        .tagline {
+            display: inline-block;
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--accent-gold);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 0.8rem;
+            border: 1px solid var(--accent-gold);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            flex: 1;
+            width: 92%;
+        }
+        /* CONTROL TOOLBAR & CRUCIAL BUTTONS */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            background: #f1f3f5;
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        .toolbar-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .toolbar input, .toolbar select {
+            padding: 0.55rem 0.8rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        .btn {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.55rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #0b3d25;
+        }
+        .btn-gold {
+            background-color: #d39e00;
+            color: #212529;
+        }
+        .btn-gold:hover {
+            background-color: #ffc107;
+        }
+        .btn-outline {
+            background-color: white;
+            color: var(--primary-green);
+            border: 1px solid var(--primary-green);
+        }
+        .btn-outline:hover {
+            background-color: #e8f5e9;
+        }
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border-top: 4px solid var(--accent-gold);
+        }
+        .stat-card h4 {
+            margin: 0 0 0.4rem 0;
+            color: #666;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin: 0;
+        }
+        h2 {
+            color: var(--primary-green);
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #fcfdfd;
+        }
+        .badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge-sacco {
+            background-color: #e8f5e9;
+            color: var(--primary-green);
+            border: 1px solid #c3e6cb;
+        }
+        .badge-ibibina {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+        }
+        footer {
+            background-color: var(--dark-footer);
+            color: #cbd5e1;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 4px solid var(--accent-gold);
+            margin-top: auto;
+        }
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="marquee-container">
+            <div class="marquee-text">WELCOME TO THE TEP NATIONAL REGULATORY PORTAL &bull; TOGETHER WE CAN END POVERTY &bull; OFFICIAL GOVERNANCE & OVERSIGHT DASHBOARD</div>
+        </div>
+        <h1>National Master Regulatory Dashboard</h1>
+        <p>Centralized Official Oversight for All SACCOs and Ibibina Networks</p>
+        <div class="tagline">Together We End Poverty (TEP) Network</div>
+    </header>
+
+    <div class="container">
+        <!-- SYSTEM STATS OVERVIEW -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Total Registered Entities</h4>
+                <p class="value" id="totalEntities">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Total SACCOs</h4>
+                <p class="value" id="totalSaccos">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Total Ibibina Groups</h4>
+                <p class="value" id="totalIbibina">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>National System Savings</h4>
+                <p class="value" id="systemSavings">0 RWF</p>
+            </div>
+        </div>
+
+        <!-- CONTROL TOOLBAR WITH CRUCIAL ACTION BUTTONS -->
+        <div class="toolbar">
+            <div class="toolbar-group">
+                <input type="text" id="searchInput" placeholder="Search by name, sector or leader..." onkeyup="filterEntities()">
+                <select id="typeFilter" onchange="filterEntities()">
+                    <option value="ALL">All Entity Types</option>
+                    <option value="SACCO">SACCOs Only</option>
+                    <option value="IBIBINA">Ibibina Only</option>
+                </select>
+            </div>
+            <div class="toolbar-group">
+                <button class="btn btn-outline" onclick="initMasterDashboard()">🔄 Refresh Live Data</button>
+                <button class="btn btn-gold" onclick="exportReport()">📥 Export Report</button>
+                <a href="index.html" class="btn">➕ Register New Entity</a>
+            </div>
+        </div>
+
+        <h2>
+            <span>Regulated Entities Directory</span>
+            <span id="recordCount" style="font-size: 0.85rem; color: #666; font-weight: normal;">Showing 0 entities</span>
+        </h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Entity Name</th>
+                    <th>Type</th>
+                    <th>Jurisdiction (Province / District / Sector)</th>
+                    <th>Leadership Contact</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="masterTableBody">
+                <tr><td colspan="5" style="text-align: center; color: #666;">Loading all registered entities from secure database...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        &copy; 2026 Together We End Poverty (TEP). Official National Regulatory Version. IT creator <a href="mailto:schoolsystems.ange.rw@gmail.com">schoolsystems.ange.rw@gmail.com</a>.
+    </footer>
+
+    <script>
+        // Initialize Supabase Client
+        const SUPABASE_URL = 'https://mdfqgdmcpfnfifpdaqdf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_LtpqyKz9mjGt-m0hw0J6VQ_A3VFTkiN';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let allGroupsData = [];
+
+        async function initMasterDashboard() {
+            // Fetch all registered groups/saccos/ibibina
+            const { data: groups, error } = await supabaseClient
+                .from('group_registrations')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching registrations:', error);
+                document.getElementById('masterTableBody').innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error loading entities from database.</td></tr>`;
+                return;
+            }
+
+            allGroupsData = groups || [];
+
+            // Fetch all contributions to compute system-wide totals
+            const { data: contributions } = await supabaseClient
+                .from('group_contributions')
+                .select('amount');
+
+            let totalSavingsAmount = 0;
+            if (contributions) {
+                contributions.forEach(c => totalSavingsAmount += Number(c.amount));
+            }
+            document.getElementById('systemSavings').textContent = totalSavingsAmount.toLocaleString() + ' RWF';
+
+            if (allGroupsData.length === 0) {
+                document.getElementById('masterTableBody').innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666;">No SACCOs or Ibibina registered yet in the national network.</td></tr>`;
+                document.getElementById('totalEntities').textContent = '0';
+                document.getElementById('totalSaccos').textContent = '0';
+                document.getElementById('totalIbibina').textContent = '0';
+                document.getElementById('recordCount').textContent = 'Showing 0 entities';
+                return;
+            }
+
+            document.getElementById('totalEntities').textContent = allGroupsData.length;
+            
+            let saccosCount = 0;
+            let ibibinaCount = 0;
+            allGroupsData.forEach(g => {
+                if (g.group_type && g.group_type.toLowerCase().includes('sacco')) saccosCount++;
+                else ibibinaCount++;
+            });
+
+            document.getElementById('totalSaccos').textContent = saccosCount;
+            document.getElementById('totalIbibina').textContent = ibibinaCount;
+
+            renderTable(allGroupsData);
+        }
+
+        function renderTable(dataArray) {
+            const tbody = document.getElementById('masterTableBody');
+            document.getElementById('recordCount').textContent = `Showing ${dataArray.length} entities`;
+
+            if (dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666;">No matching entities found.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            dataArray.forEach(g => {
+                const isSacco = g.group_type && g.group_type.toLowerCase().includes('sacco');
+                const badgeClass = isSacco ? 'badge-sacco' : 'badge-ibibina';
+
+                html += `
+                    <tr>
+                        <td><strong>${g.group_name}</strong></td>
+                        <td><span class="badge ${badgeClass}">${g.group_type}</span></td>
+                        <td>${g.province} / ${g.district} / ${g.sector}</td>
+                        <td>${g.chair_name} <br><small style="color:#555;">📞 ${g.chair_phone}</small></td>
+                        <td>
+                            <button class="btn" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="openGroupDashboard('${g.group_name}')">Open Portal &rarr;</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function filterEntities() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const typeVal = document.getElementById('typeFilter').value;
+
+            const filtered = allGroupsData.filter(g => {
+                const matchesSearch = g.group_name.toLowerCase().includes(searchVal) ||
+                                      g.sector.toLowerCase().includes(searchVal) ||
+                                      g.district.toLowerCase().includes(searchVal) ||
+                                      g.chair_name.toLowerCase().includes(searchVal);
+                
+                const isSacco = g.group_type && g.group_type.toLowerCase().includes('sacco');
+                let matchesType = true;
+                if (typeVal === 'SACCO') matchesType = isSacco;
+                if (typeVal === 'IBIBINA') matchesType = !isSacco;
+
+                return matchesSearch && matchesType;
+            });
+
+            renderTable(filtered);
+        }
+
+        function openGroupDashboard(groupName) {
+            localStorage.setItem('activeGroupName', groupName);
+            window.location.href = 'group-dashboard.html';
+        }
+
+        function exportReport() {
+            window.print();
+        }
+
+        window.addEventListener('DOMContentLoaded', initMasterDashboard);
+    </script>
+</body>
+</html>
