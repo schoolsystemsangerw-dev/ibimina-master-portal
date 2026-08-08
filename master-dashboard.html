@@ -194,6 +194,13 @@
         .btn-gold:hover {
             background-color: #ffc107;
         }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #b02a37;
+        }
         /* STATS GRID */
         .stats-grid {
             display: grid;
@@ -461,7 +468,10 @@
                         <td>${g.province} / ${g.district} / ${g.sector}</td>
                         <td>${g.chair_name} <br><small style="color:#555;">📞 ${g.chair_phone}</small></td>
                         <td>
-                            <button class="btn" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="openGroupDashboard('${g.group_name}')">Open Portal &rarr;</button>
+                            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                                <button class="btn" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="openGroupDashboard('${g.group_name}')">Open Portal &rarr;</button>
+                                <button class="btn btn-danger" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="deleteEntity('${g.id}', '${g.group_name}')">🗑️ Delete</button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -491,6 +501,24 @@
             renderTable(filtered);
         }
 
+        // --- DELETE ENTITY FUNCTION ---
+        async function deleteEntity(entityId, entityName) {
+            if (confirm(`Are you sure you want to delete regulatory registration for "${entityName}"? This will remove the entity and all associated group data permanently.`)) {
+                const { error } = await supabaseClient
+                    .from('group_registrations')
+                    .delete()
+                    .eq('id', entityId);
+
+                if (error) {
+                    console.error('Error deleting entity:', error);
+                    alert('Failed to delete entity from database: ' + error.message);
+                } else {
+                    alert(`Entity "${entityName}" has been successfully deleted from the national master records.`);
+                    initMasterDashboard();
+                }
+            }
+        }
+
         // --- SIDEBAR ACTION FUNCTIONS ---
         function sendActivitiesToGov() {
             let govEmail = prompt("Enter Government Sector or District Official Email Address where reports should be sent:", "sector.official@gov.rw");
@@ -508,7 +536,7 @@
             let groupPerformance = allGroupsData.map(g => {
                 let groupContribs = allContributionsData.filter(c => c.group_name === g.group_name);
                 let total = groupContribs.reduce((sum, c) => sum + Number(c.amount), 0);
-                return { name: g.group_name, type: g.group_type, district: g.district, sector: g.sector, totalSavings: total };
+                return { id: g.id, name: g.group_name, type: g.group_type, district: g.district, sector: g.sector, totalSavings: total };
             });
 
             groupPerformance.sort((a, b) => b.totalSavings - a.totalSavings);
@@ -531,7 +559,12 @@
                         <td><span class="badge" style="background:#e9ecef; color:#333;">${gp.type}</span></td>
                         <td>${gp.district} / ${gp.sector}</td>
                         <td><strong>${gp.totalSavings.toLocaleString()} RWF</strong></td>
-                        <td>${tierBadge}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                ${tierBadge}
+                                <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="deleteEntity('${gp.id}', '${gp.name}')">🗑️ Delete</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
