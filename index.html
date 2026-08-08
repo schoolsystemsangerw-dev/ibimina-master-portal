@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local SACCO & Ibimina Master Portal | Together We End Poverty</title>
+    <!-- Include Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary-green: #0f5132;
@@ -31,7 +33,6 @@
             overflow: hidden;
             position: relative;
         }
-        /* Moving text styling (Marquee) */
         .marquee-container {
             width: 100%;
             overflow: hidden;
@@ -299,7 +300,7 @@
                 </div>
             </div>
 
-            <button type="submit">Submit Official Group Registration Application</button>
+            <button type="submit" id="submitBtn">Submit Official Group Registration Application</button>
         </form>
     </div>
 
@@ -309,5 +310,59 @@
         </div>
     </footer>
 
+    <script>
+        // Initialize Supabase Client
+        const SUPABASE_URL = 'https://mdfqgdmcpfnfifpdaqdf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_LtpqyKz9mjGt-m0hw0J6VQ_A3VFTkiN';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const form = document.getElementById('registrationForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting Application...';
+
+            // Collect form field values
+            const formData = {
+                group_name: document.getElementById('groupName').value,
+                group_type: document.getElementById('groupType').value,
+                province: document.getElementById('province').value,
+                district: document.getElementById('district').value,
+                sector: document.getElementById('sector').value,
+                cell: document.getElementById('cell').value,
+                village: document.getElementById('village').value,
+                chair_name: document.getElementById('chairName').value,
+                chair_id: document.getElementById('chairId').value,
+                chair_phone: document.getElementById('chairPhone').value,
+                chair_email: document.getElementById('chairEmail').value,
+                sec_name: document.getElementById('secName').value,
+                sec_id: document.getElementById('secId').value,
+                sec_phone: document.getElementById('secPhone').value,
+                sec_email: document.getElementById('secEmail').value,
+                acc_name: document.getElementById('accName').value,
+                acc_id: document.getElementById('accId').value,
+                acc_phone: document.getElementById('accPhone').value,
+                acc_email: document.getElementById('accEmail').value
+            };
+
+            // Insert into Supabase table
+            const { error } = await supabaseClient
+                .from('group_registrations')
+                .insert([formData]);
+
+            if (error) {
+                alert('Registration failed: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Official Group Registration Application';
+            } else {
+                alert('Success! Your group registration has been securely recorded on the TEP Master Portal.');
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Official Group Registration Application';
+            }
+        });
+    </script>
 </body>
 </html>
