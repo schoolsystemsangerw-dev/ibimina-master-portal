@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Local SACCO & Ibimina Master Portal</title>
+    <title>Local SACCO & Ibimina Master Portal | Together We End Poverty</title>
     <style>
         :root {
             --primary-green: #0f5132;
             --accent-gold: #ffc107;
             --light-bg: #f8f9fa;
+            --dark-footer: #0a3622;
         }
         body {
             font-family: Arial, sans-serif;
@@ -16,54 +17,177 @@
             padding: 0;
             background-color: var(--light-bg);
             color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         header {
-            background-color: var(--primary-green);
+            background: linear-gradient(135deg, var(--primary-green), #198754);
             color: white;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1rem;
             text-align: center;
             border-bottom: 4px solid var(--accent-gold);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.2rem;
+            letter-spacing: 0.5px;
+        }
+        header p {
+            margin: 0;
+            font-size: 1.1rem;
+            color: #e9ecef;
+        }
+        .tagline {
+            display: inline-block;
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--accent-gold);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 0.8rem;
+            border: 1px solid var(--accent-gold);
         }
         .container {
-            max-width: 800px;
-            margin: 2rem auto;
+            max-width: 850px;
+            margin: 2.5rem auto;
             background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            flex: 1;
+            width: 90%;
         }
         h2 {
             color: var(--primary-green);
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        .section-desc {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
         }
         .form-group {
             margin-bottom: 1.2rem;
         }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             font-weight: bold;
+            color: #444;
+            font-size: 0.95rem;
         }
         input, select {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
             font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.15);
+            outline: none;
         }
         button {
             background-color: var(--primary-green);
             color: white;
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.5rem;
             border: none;
-            border-radius: 4px;
-            font-size: 1rem;
+            border-radius: 6px;
+            font-size: 1.05rem;
             cursor: pointer;
             font-weight: bold;
             width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 1rem;
         }
         button:hover {
             background-color: #0b3d25;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        footer {
+            background-color: var(--dark-footer);
+            color: #cbd5e1;
+            padding: 2.5rem 1rem 1.5rem 1rem;
+            font-size: 0.9rem;
+            border-top: 4px solid var(--accent-gold);
+            margin-top: auto;
+        }
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .footer-col h3 {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .footer-col p, .footer-col ul {
+            margin: 0 0 0.5rem 0;
+            line-height: 1.6;
+        }
+        .footer-col ul {
+            padding-left: 0;
+            list-style: none;
+        }
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-col a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover {
+            color: var(--accent-gold);
+        }
+        .footer-bottom {
+            max-width: 1000px;
+            margin: 1.5rem auto 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -71,38 +195,148 @@
 
     <header>
         <h1>Local SACCO & Ibimina Master Portal</h1>
-        <p>Secure Digital Management System for Grassroots Savings Groups</p>
+        <p>Empowering Grassroots Financial Inclusion</p>
+        <div class="tagline">An Initiative of Together We End Poverty (TEP)</div>
     </header>
 
     <div class="container">
         <h2>Register Your Savings Group / Local SACCO</h2>
+        <p class="section-desc">Fill in the administrative details below to securely register your group unit on the master network.</p>
+        
         <form id="registrationForm">
-            <div class="form-group">
-                <label for="groupName">Group / SACCO Name:</label>
-                <input type="text" id="groupName" required placeholder="e.g., Twiteze Imbere Ibimina">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="groupName">Group / SACCO Name:</label>
+                    <input type="text" id="groupName" required placeholder="e.g., Twiteze Imbere Ibimina">
+                </div>
+                <div class="form-group">
+                    <label for="groupType">Structure Classification:</label>
+                    <select id="groupType">
+                        <option value="ibimina">Traditional Savings Group (Ibimina)</option>
+                        <option value="sacco">Local SACCO / Cooperative</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="groupType">Group Structure Type:</label>
-                <select id="groupType">
-                    <option value="ibimina">Traditional Savings Group (Ibimina)</option>
-                    <option value="sacco">Local SACCO / Cooperative</option>
-                </select>
+
+            <h2>Administrative Location Breakdown</h2>
+            <p class="section-desc">Specify the precise geographical jurisdiction of your group.</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="province">Province:</label>
+                    <input type="text" id="province" required placeholder="e.g., Eastern Province">
+                </div>
+                <div class="form-group">
+                    <label for="district">District:</label>
+                    <input type="text" id="district" required placeholder="e.g., Nyagatare District">
+                </div>
+                <div class="form-group">
+                    <label for="sector">Sector:</label>
+                    <input type="text" id="sector" required placeholder="e.g., Nyagatare Sector">
+                </div>
+                <div class="form-group">
+                    <label for="cell">Cell:</label>
+                    <input type="text" id="cell" required placeholder="e.g., Kiziguro Cell">
+                </div>
+                <div class="form-group full-width">
+                    <label for="village">Village:</label>
+                    <input type="text" id="village" required placeholder="e.g., Umucyo Village">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="location">Sector / District:</label>
-                <input type="text" id="location" required placeholder="e.g., Nyagatare Sector">
+
+            <h2>Executive Committee Leadership Details</h2>
+            <p class="section-desc">Provide primary contact credentials for group oversight.</p>
+
+            <!-- Chairperson -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="chairName">Chairperson Full Name:</label>
+                    <input type="text" id="chairName" required placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label for="chairId">Chairperson National ID (16 digits):</label>
+                    <input type="text" id="chairId" maxlength="16" required placeholder="1 199... ">
+                </div>
+                <div class="form-group">
+                    <label for="chairPhone">Chairperson Phone Number:</label>
+                    <input type="tel" id="chairPhone" required placeholder="078xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label for="chairEmail">Chairperson Email:</label>
+                    <input type="email" id="chairEmail" required placeholder="chairperson@gmail.com">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="leaderName">Group Leader / Administrator Full Name:</label>
-                <input type="text" id="leaderName" required placeholder="Enter full name">
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 1.5rem 0;">
+
+            <!-- Secretary -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="secName">Secretary Full Name:</label>
+                    <input type="text" id="secName" required placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label for="secId">Secretary National ID (16 digits):</label>
+                    <input type="text" id="secId" maxlength="16" required placeholder="1 199... ">
+                </div>
+                <div class="form-group">
+                    <label for="secPhone">Secretary Phone Number:</label>
+                    <input type="tel" id="secPhone" required placeholder="078xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label for="secEmail">Secretary Email:</label>
+                    <input type="email" id="secEmail" required placeholder="secretary@gmail.com">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="tel" id="phone" required placeholder="078xxxxxxxx">
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 1.5rem 0;">
+
+            <!-- Accountant -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="accName">Accountant / Treasurer Full Name:</label>
+                    <input type="text" id="accName" required placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label for="accId">Accountant National ID (16 digits):</label>
+                    <input type="text" id="accId" maxlength="16" required placeholder="1 199... ">
+                </div>
+                <div class="form-group">
+                    <label for="accPhone">Accountant Phone Number:</label>
+                    <input type="tel" id="accPhone" required placeholder="078xxxxxxxx">
+                </div>
+                <div class="form-group">
+                    <label for="accEmail">Accountant Email:</label>
+                    <input type="email" id="accEmail" required placeholder="accountant@gmail.com">
+                </div>
             </div>
-            <button type="submit">Submit Account Application</button>
+
+            <button type="submit">Submit Official Group Registration Application</button>
         </form>
     </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>About Together We End Poverty (TEP)</h3>
+                <p>A transformational socio-economic platform engineered to uplift grassroots communities, enhance transparency, and foster sustainable prosperity across regions.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Portal Infrastructure</h3>
+                <p><strong>System:</strong> Local SACCO & Ibimina Master Portal</p>
+                <p><strong>Network Scope:</strong> Secure Multi-Tenant Architecture for Community Financial Groups</p>
+            </div>
+            <div class="footer-col">
+                <h3>System Support & IT Engineering</h3>
+                <p>Designed and Maintained by IT Creator</p>
+                <p><strong>Email:</strong> <a href="mailto:schoolsystems.ange.rw@gmail.com">schoolsystems.ange.rw@gmail.com</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2026 Together We End Poverty (TEP). Version 1.0. All rights reserved.</div>
+            <div>Secure Cloud Integration via Supabase & GitHub Pages</div>
+        </div>
+    </footer>
 
 </body>
 </html>
