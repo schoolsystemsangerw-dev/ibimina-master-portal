@@ -396,7 +396,14 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Official Group Registration Application';
             } else {
-                alert('Success! Your group registration has been securely recorded on the TEP Master Portal.');
+                // Save the group name to localStorage for immediate dashboard routing
+                localStorage.setItem('activeGroupName', formData.group_name);
+
+                alert('Success! Your group registration has been securely recorded. Redirecting to your dashboard...');
+                
+                // Automatically redirect to the dashboard page
+                window.location.href = 'group-dashboard.html';
+
                 form.reset();
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Official Group Registration Application';
