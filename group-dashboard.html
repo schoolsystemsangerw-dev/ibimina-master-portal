@@ -233,7 +233,7 @@
 
     <header>
         <div class="marquee-container">
-            <div class="marquee-text" id="marqueeGroupName">WELCOME TO YOUR GROUP &nbsp;&bull;&nbsp; TOGETHER WE CAN END POVERTY</div>
+            <div class="marquee-text" id="marqueeGroupName">WELCOME TO YOUR GROUP &bull; TOGETHER WE CAN END POVERTY</div>
         </div>
         <p id="headerSubText">Operational Management & Member Oversight Portal</p>
         <div class="tagline">Together We End Poverty (TEP) Network</div>
@@ -442,8 +442,8 @@
 
             activeGroup = groupName;
 
-            // Update Marquee moving words with the dynamic group name
-            document.getElementById('marqueeGroupName').textContent = `WELCOME TO ${groupName.toUpperCase()} &nbsp;&bull;&nbsp; TOGETHER WE CAN END POVERTY`;
+            // Update Marquee moving words with clean Unicode bullet point
+            document.getElementById('marqueeGroupName').textContent = `WELCOME TO ${groupName.toUpperCase()} • TOGETHER WE CAN END POVERTY`;
 
             // Fetch Group Details
             const { data: groupData } = await supabaseClient
