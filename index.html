@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local SACCO & Ibimina Master Portal</title>
+    <style>
+        :root {
+            --primary-green: #0f5132;
+            --accent-gold: #ffc107;
+            --light-bg: #f8f9fa;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: #333;
+        }
+        header {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-gold);
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0b3d25;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Local SACCO & Ibimina Master Portal</h1>
+        <p>Secure Digital Management System for Grassroots Savings Groups</p>
+    </header>
+
+    <div class="container">
+        <h2>Register Your Savings Group / Local SACCO</h2>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="groupName">Group / SACCO Name:</label>
+                <input type="text" id="groupName" required placeholder="e.g., Twiteze Imbere Ibimina">
+            </div>
+            <div class="form-group">
+                <label for="groupType">Group Structure Type:</label>
+                <select id="groupType">
+                    <option value="ibimina">Traditional Savings Group (Ibimina)</option>
+                    <option value="sacco">Local SACCO / Cooperative</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="location">Sector / District:</label>
+                <input type="text" id="location" required placeholder="e.g., Nyagatare Sector">
+            </div>
+            <div class="form-group">
+                <label for="leaderName">Group Leader / Administrator Full Name:</label>
+                <input type="text" id="leaderName" required placeholder="Enter full name">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" required placeholder="078xxxxxxxx">
+            </div>
+            <button type="submit">Submit Account Application</button>
+        </form>
+    </div>
+
+</body>
+</html>
