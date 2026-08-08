@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Activity Control Dashboard | TEP Master Network</title>
+    <title>Group Control Dashboard | Together We End Poverty</title>
+    <!-- Include Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -25,70 +26,77 @@
         header {
             background: linear-gradient(135deg, var(--primary-green), #198754);
             color: white;
-            padding: 1.5rem 1rem;
+            padding: 2rem 1rem;
             text-align: center;
             border-bottom: 4px solid var(--accent-gold);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            overflow: hidden;
-            position: relative;
-        }
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            box-sizing: border-box;
-            margin-bottom: 0.5rem;
-        }
-        .marquee-text {
-            display: inline-block;
-            padding-left: 100%;
-            animation: marquee 18s linear infinite;
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--accent-gold);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
         }
         header h1 {
-            margin: 0;
-            font-size: 1.6rem;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.8rem;
         }
         header p {
-            margin: 0.5rem 0 0 0;
-            font-size: 1rem;
+            margin: 0;
+            font-size: 1.1rem;
             color: #e9ecef;
         }
         .container {
-            max-width: 1000px;
-            margin: 2rem auto;
+            max-width: 900px;
+            margin: 2.5rem auto;
             background: white;
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 10px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.08);
             flex: 1;
             width: 90%;
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
+        .nav-back {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+        .nav-back:hover {
+            text-decoration: underline;
+        }
+        .group-title-card {
+            background-color: #e8f5e9;
+            border-left: 5px solid var(--primary-green);
+            padding: 1.5rem;
+            border-radius: 6px;
             margin-bottom: 2rem;
         }
-        .stat-card {
-            background: var(--light-bg);
-            border-left: 5px solid var(--primary-green);
-            padding: 1.2rem;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        .group-title-card h3 {
+            margin: 0 0 0.3rem 0;
+            color: var(--primary-green);
+            font-size: 1.5rem;
         }
-        .stat-card h3 {
-            margin: 0 0 0.5rem 0;
+        .group-title-card p {
+            margin: 0;
+            color: #555;
             font-size: 0.95rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .stat-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border-top: 4px solid var(--accent-gold);
+        }
+        .stat-card h4 {
+            margin: 0 0 0.5rem 0;
             color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
         }
         .stat-card .value {
             font-size: 1.5rem;
@@ -98,9 +106,9 @@
         }
         h2 {
             color: var(--primary-green);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             border-bottom: 2px solid #e9ecef;
-            padding-bottom: 0.4rem;
+            padding-bottom: 0.5rem;
             margin-top: 2rem;
         }
         table {
@@ -115,21 +123,8 @@
             font-size: 0.95rem;
         }
         th {
-            background-color: var(--primary-green);
-            color: white;
-        }
-        .btn-action {
-            background-color: var(--primary-green);
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-        .btn-action:hover {
-            background-color: #0b3d25;
+            background-color: #f8f9fa;
+            color: var(--primary-green);
         }
         footer {
             background-color: var(--dark-footer);
@@ -144,74 +139,47 @@
             color: var(--accent-gold);
             text-decoration: none;
         }
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="marquee-container">
-            <div class="marquee-text">WELCOME TO YOUR SACCO/IKIBINA &nbsp;&bull;&nbsp; TOGETHER WE END POVERTY</div>
-        </div>
-        <h1>Group Activity Control Portal</h1>
-        <p>Manage Members, Financial Contributions, and Internal Credit Operations</p>
+        <h1 id="headerGroupName">Group Control Dashboard</h1>
+        <p>Operational Management & Member Oversight Portal</p>
     </header>
 
     <div class="container">
-        <!-- Quick Stats Overview -->
+        <a href="index.html" class="nav-back">&larr; Back to Master Registration Portal</a>
+
+        <div class="group-title-card">
+            <h3 id="displayGroupName">Loading Group Profile...</h3>
+            <p id="displayLocation">Location jurisdiction details loading...</p>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>Total Registered Members</h3>
-                <p class="value" id="memberCount">0</p>
+                <h4>Structure Type</h4>
+                <p class="value" id="displayType">-</p>
             </div>
             <div class="stat-card">
-                <h3>Total Savings Pooled (RWF)</h3>
-                <p class="value" id="totalSavings">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>Active Loans Issued (RWF)</h3>
-                <p class="value" id="totalLoans">0</p>
+                <h4>Active Status</h4>
+                <p class="value" style="color: #198754;">Verified & Active</p>
             </div>
         </div>
 
-        <h2>Member Roster & Contributions</h2>
-        <p style="color: #666; font-size: 0.9rem;">Overview of active participants contributing to the group fund.</p>
-        
+        <h2>Executive Committee Contacts</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Member Name</th>
+                    <th>Role</th>
+                    <th>Full Name</th>
                     <th>Phone Number</th>
-                    <th>Total Shares / Savings (RWF)</th>
-                    <th>Status</th>
+                    <th>Email</th>
                 </tr>
             </thead>
-            <tbody id="memberTableBody">
+            <tbody id="execTableBody">
                 <tr>
-                    <td colspan="4" style="text-align: center; color: #777;">No members recorded yet. Integration ready.</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h2>Internal Loan Requests Tracking</h2>
-        <p style="color: #666; font-size: 0.9rem;">Review and monitor member credit requests and repayment status.</p>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Borrower Name</th>
-                    <th>Requested Amount (RWF)</th>
-                    <th>Repayment Due Date</th>
-                    <th>Approval Status</th>
-                </tr>
-            </thead>
-            <tbody id="loanTableBody">
-                <tr>
-                    <td colspan="4" style="text-align: center; color: #777;">No active loan requests.</td>
+                    <td colspan="4" style="text-align: center; color: #666;">Fetching leadership roster...</td>
                 </tr>
             </tbody>
         </table>
@@ -221,5 +189,82 @@
         &copy; 2026 Together We End Poverty (TEP). Version 1.0. IT creator <a href="mailto:schoolsystems.ange.rw@gmail.com">schoolsystems.ange.rw@gmail.com</a>.
     </footer>
 
+    <script>
+        // Initialize Supabase Client
+        const SUPABASE_URL = 'https://mdfqgdmcpfnfifpdaqdf.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_LtpqyKz9mjGt-m0hw0J6VQ_A3VFTkiN';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function loadGroupDashboard() {
+            // Retrieve active group name from localStorage
+            let groupName = localStorage.getItem('activeGroupName');
+
+            if (!groupName) {
+                // Fallback option if local storage is empty: fetch the latest registered group from Supabase
+                const { data, error } = await supabaseClient
+                    .from('group_registrations')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (data && data.length > 0) {
+                    groupName = data[0].group_name;
+                    localStorage.setItem('activeGroupName', groupName);
+                } else {
+                    document.getElementById('displayGroupName').textContent = 'No Registered Group Found';
+                    document.getElementById('displayLocation').textContent = 'Please complete the registration form first.';
+                    return;
+                }
+            }
+
+            // Query Supabase for the specific group's data
+            const { data: groupData, error } = await supabaseClient
+                .from('group_registrations')
+                .select('*')
+                .eq('group_name', groupName)
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (error || !groupData || groupData.length === 0) {
+                document.getElementById('displayGroupName').textContent = groupName;
+                document.getElementById('displayLocation').textContent = 'Error loading precise profile data from server.';
+                return;
+            }
+
+            const group = groupData[0];
+
+            // Populate dashboard fields
+            document.getElementById('headerGroupName').textContent = group.group_name + ' Dashboard';
+            document.getElementById('displayGroupName').textContent = group.group_name;
+            document.getElementById('displayLocation').textContent = `Province: ${group.province} | District: ${group.district} | Sector: ${group.sector} | Cell: ${group.cell} | Village: ${group.village}`;
+            document.getElementById('displayType').textContent = group.group_type.toUpperCase();
+
+            // Populate Executive Committee Table
+            const execTableBody = document.getElementById('execTableBody');
+            execTableBody.innerHTML = `
+                <tr>
+                    <td><strong>Chairperson</strong></td>
+                    <td>${group.chair_name}</td>
+                    <td>${group.chair_phone}</td>
+                    <td>${group.chair_email}</td>
+                </tr>
+                <tr>
+                    <td><strong>Secretary</strong></td>
+                    <td>${group.sec_name}</td>
+                    <td>${group.sec_phone}</td>
+                    <td>${group.sec_email}</td>
+                </tr>
+                <tr>
+                    <td><strong>Accountant</strong></td>
+                    <td>${group.acc_name}</td>
+                    <td>${group.acc_phone}</td>
+                    <td>${group.acc_email}</td>
+                </tr>
+            `;
+        }
+
+        // Run on page load
+        window.addEventListener('DOMContentLoaded', loadGroupDashboard);
+    </script>
 </body>
 </html>
