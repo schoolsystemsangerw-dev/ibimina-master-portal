@@ -519,16 +519,43 @@
             }
         }
 
-        // --- SIDEBAR ACTION FUNCTIONS ---
-        function sendActivitiesToGov() {
-            let govEmail = prompt("Enter Government Sector or District Official Email Address where reports should be sent:", "sector.official@gov.rw");
+        // --- LIVE WEBHOOK DISPATCH TO MAKE.COM ---
+        async function sendActivitiesToGov() {
+            let govEmail = prompt("Enter Government Sector or District Official Email Address where reports should be sent:", "schoolsymptoms.ange.rw@gmail.com");
             
-            if (govEmail && govEmail.trim() !== "") {
-                if (govEmail.includes("@")) {
-                    alert(`Official Report Status: All TEP network activities, savings ledgers, and membership registries have been successfully compiled and securely transmitted to government office: ${govEmail}`);
+            if (!govEmail || govEmail.trim() === "") return;
+            if (!govEmail.includes("@")) {
+                alert("Please enter a valid email address.");
+                return;
+            }
+
+            const webhookUrl = "https://hook.eu1.make.com/ms926m4ncl55jqdw4o4lav9c5rlez72g";
+
+            let payload = {
+                recipient_email: govEmail,
+                system_name: "TEP National Regulatory Portal",
+                total_entities: allGroupsData.length,
+                total_contributions_records: allContributionsData.length,
+                entities: allGroupsData,
+                contributions: allContributionsData,
+                timestamp: new Date().toLocaleString()
+            };
+
+            try {
+                let response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert(`Success! TEP activities report has been securely transmitted and dispatched via Webhook to: ${govEmail}`);
                 } else {
-                    alert("Please enter a valid email address.");
+                    alert("The webhook responded with an error. Please verify your Make.com scenario is running.");
                 }
+            } catch (err) {
+                console.error("Transmission error:", err);
+                alert("Network error connecting to email webhook. Please verify your internet connection or webhook URL.");
             }
         }
 
