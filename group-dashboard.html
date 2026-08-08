@@ -30,15 +30,45 @@
             text-align: center;
             border-bottom: 4px solid var(--accent-gold);
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
         }
-        header h1 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.8rem;
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            margin-bottom: 0.5rem;
+        }
+        .marquee-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 18s linear infinite;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
         header p {
             margin: 0;
             font-size: 1.1rem;
             color: #e9ecef;
+        }
+        .tagline {
+            display: inline-block;
+            background-color: rgba(255, 193, 7, 0.2);
+            color: var(--accent-gold);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 0.8rem;
+            border: 1px solid var(--accent-gold);
         }
         .container {
             max-width: 950px;
@@ -202,8 +232,11 @@
 <body>
 
     <header>
-        <h1 id="headerGroupName">Group Control Dashboard</h1>
-        <p>Operational Management & Member Oversight Portal</p>
+        <div class="marquee-container">
+            <div class="marquee-text" id="marqueeGroupName">WELCOME TO YOUR GROUP &nbsp;&bull;&nbsp; TOGETHER WE CAN END POVERTY</div>
+        </div>
+        <p id="headerSubText">Operational Management & Member Oversight Portal</p>
+        <div class="tagline">Together We End Poverty (TEP) Network</div>
     </header>
 
     <div class="container">
@@ -409,6 +442,9 @@
 
             activeGroup = groupName;
 
+            // Update Marquee moving words with the dynamic group name
+            document.getElementById('marqueeGroupName').textContent = `WELCOME TO ${groupName.toUpperCase()} &nbsp;&bull;&nbsp; TOGETHER WE CAN END POVERTY`;
+
             // Fetch Group Details
             const { data: groupData } = await supabaseClient
                 .from('group_registrations')
@@ -419,7 +455,6 @@
 
             if (groupData && groupData.length > 0) {
                 const group = groupData[0];
-                document.getElementById('headerGroupName').textContent = group.group_name + ' Dashboard';
                 document.getElementById('displayGroupName').textContent = group.group_name;
                 document.getElementById('displayLocation').textContent = `Province: ${group.province} | District: ${group.district} | Sector: ${group.sector} | Cell: ${group.cell} | Village: ${group.village}`;
                 document.getElementById('displayType').textContent = group.group_type.toUpperCase();
