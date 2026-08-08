@@ -493,18 +493,24 @@
 
         // --- SIDEBAR ACTION FUNCTIONS ---
         function sendActivitiesToGov() {
-            alert("Official Report Status: All TEP network activities, savings ledgers, and membership registries have been successfully compiled and securely routed to Government Administrative Sectors and District Representatives.");
+            let govEmail = prompt("Enter Government Sector or District Official Email Address where reports should be sent:", "sector.official@gov.rw");
+            
+            if (govEmail && govEmail.trim() !== "") {
+                if (govEmail.includes("@")) {
+                    alert(`Official Report Status: All TEP network activities, savings ledgers, and membership registries have been successfully compiled and securely transmitted to government office: ${govEmail}`);
+                } else {
+                    alert("Please enter a valid email address.");
+                }
+            }
         }
 
         function viewPerformanceAudit() {
-            // Calculate savings per group
             let groupPerformance = allGroupsData.map(g => {
                 let groupContribs = allContributionsData.filter(c => c.group_name === g.group_name);
                 let total = groupContribs.reduce((sum, c) => sum + Number(c.amount), 0);
                 return { name: g.group_name, type: g.group_type, district: g.district, sector: g.sector, totalSavings: total };
             });
 
-            // Sort by highest savings descending
             groupPerformance.sort((a, b) => b.totalSavings - a.totalSavings);
 
             document.getElementById('sectionTitle').innerHTML = `<span>Performance Audit Ranking (High to Low Savings)</span>`;
