@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Activity Control Dashboard | TEP Master Network</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary-green: #0f5132;
+            --accent-gold: #ffc107;
+            --light-bg: #f8f9fa;
+            --dark-footer: #0a3622;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary-green), #198754);
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-gold);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+        }
+        header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1rem;
+            color: #e9ecef;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            flex: 1;
+            width: 90%;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--light-bg);
+            border-left: 5px solid var(--primary-green);
+            padding: 1.2rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .stat-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.95rem;
+            color: #666;
+        }
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-green);
+            margin: 0;
+        }
+        h2 {
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.4rem;
+            margin-top: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 0.95rem;
+        }
+        th {
+            background-color: var(--primary-green);
+            color: white;
+        }
+        .btn-action {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .btn-action:hover {
+            background-color: #0b3d25;
+        }
+        footer {
+            background-color: var(--dark-footer);
+            color: #cbd5e1;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 4px solid var(--accent-gold);
+            margin-top: auto;
+        }
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Group Activity Control Portal</h1>
+        <p>Manage Members, Financial Contributions, and Internal Credit Operations</p>
+    </header>
+
+    <div class="container">
+        <!-- Quick Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Registered Members</h3>
+                <p class="value" id="memberCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Savings Pooled (RWF)</h3>
+                <p class="value" id="totalSavings">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Loans Issued (RWF)</h3>
+                <p class="value" id="totalLoans">0</p>
+            </div>
+        </div>
+
+        <h2>Member Roster & Contributions</h2>
+        <p style="color: #666; font-size: 0.9rem;">Overview of active participants contributing to the group fund.</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Member Name</th>
+                    <th>Phone Number</th>
+                    <th>Total Shares / Savings (RWF)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="memberTableBody">
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #777;">No members recorded yet. Integration ready.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Internal Loan Requests Tracking</h2>
+        <p style="color: #666; font-size: 0.9rem;">Review and monitor member credit requests and repayment status.</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Borrower Name</th>
+                    <th>Requested Amount (RWF)</th>
+                    <th>Repayment Due Date</th>
+                    <th>Approval Status</th>
+                </tr>
+            </thead>
+            <tbody id="loanTableBody">
+                <tr>
+                    <td colspan="4" style="text-align: center; color: #777;">No active loan requests.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        &copy; 2026 Together We End Poverty (TEP). Version 1.0. IT creator <a href="mailto:schoolsystems.ange.rw@gmail.com">schoolsystems.ange.rw@gmail.com</a>.
+    </footer>
+
+</body>
+</html>
