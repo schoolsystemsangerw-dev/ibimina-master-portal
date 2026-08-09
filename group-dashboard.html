@@ -36,17 +36,13 @@
         .logo-container {
             margin-bottom: 1rem;
         }
-        .logo-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            color: var(--primary-green);
+        .header-logo {
             width: 60px;
             height: 60px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
             border-radius: 50%;
-            font-weight: bold;
-            font-size: 1.2rem;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             border: 2px solid var(--accent-gold);
         }
@@ -262,7 +258,7 @@
 
     <header>
         <div class="logo-container">
-            <div class="logo-badge">TEP</div>
+            <img src="together.png" alt="TEP Logo" class="header-logo">
         </div>
         <div class="marquee-container">
             <div class="marquee-text" id="marqueeGroupName">WELCOME TO YOUR GROUP &bull; TOGETHER WE CAN END POVERTY</div>
