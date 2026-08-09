@@ -33,6 +33,23 @@
             overflow: hidden;
             position: relative;
         }
+        .logo-container {
+            margin-bottom: 1rem;
+        }
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: var(--primary-green);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 2px solid var(--accent-gold);
+        }
         .marquee-container {
             width: 100%;
             overflow: hidden;
@@ -80,16 +97,28 @@
             flex: 1;
             width: 90%;
         }
-        .nav-back {
-            display: inline-block;
+        .auth-bar {
+            display: flex;
+            justify-content: flex-end;
             margin-bottom: 1.5rem;
-            color: var(--primary-green);
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.95rem;
         }
-        .nav-back:hover {
-            text-decoration: underline;
+        .auth-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            width: auto;
+            margin-top: 0;
+        }
+        .auth-btn.logout {
+            background-color: #dc3545;
+        }
+        .auth-btn:hover {
+            opacity: 0.9;
         }
         .group-title-card {
             background-color: #e8f5e9;
@@ -232,6 +261,9 @@
 <body>
 
     <header>
+        <div class="logo-container">
+            <div class="logo-badge">TEP</div>
+        </div>
         <div class="marquee-container">
             <div class="marquee-text" id="marqueeGroupName">WELCOME TO YOUR GROUP &bull; TOGETHER WE CAN END POVERTY</div>
         </div>
@@ -240,171 +272,180 @@
     </header>
 
     <div class="container">
-        <a href="index.html" class="nav-back">&larr; Back to Master Registration Portal</a>
-
-        <div class="group-title-card">
-            <h3 id="displayGroupName">Loading Group Profile...</h3>
-            <p id="displayLocation">Location jurisdiction details loading...</p>
+        <div class="auth-bar">
+            <button id="authBtn" class="auth-btn" onclick="toggleAuth()">Sign In</button>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h4>Structure Type</h4>
-                <p class="value" id="displayType">-</p>
+        <div id="dashboardContent" style="display: none;">
+            <div class="group-title-card">
+                <h3 id="displayGroupName">Loading Group Profile...</h3>
+                <p id="displayLocation">Location jurisdiction details loading...</p>
             </div>
-            <div class="stat-card">
-                <h4>Registered Members</h4>
-                <p class="value" id="totalMembersCount">0</p>
-            </div>
-            <div class="stat-card">
-                <h4>Total Phone Savings</h4>
-                <p class="value" id="totalSavings">0 RWF</p>
-            </div>
-            <div class="stat-card">
-                <h4>Status</h4>
-                <p class="value" style="color: #198754;">Active</p>
-            </div>
-        </div>
 
-        <!-- MODULE 1: MEMBER REGISTRATION -->
-        <h2>1. Register Group Member</h2>
-        <div class="action-card">
-            <form id="memberForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="regMemberName">Full Name:</label>
-                        <input type="text" id="regMemberName" required placeholder="e.g., Uwase Aline">
-                    </div>
-                    <div class="form-group">
-                        <label for="regMemberPhone">Telephone Number:</label>
-                        <input type="tel" id="regMemberPhone" required placeholder="078xxxxxxxx">
-                    </div>
-                    <div class="form-group">
-                        <label for="regMemberId">National ID (16 digits):</label>
-                        <input type="text" id="regMemberId" maxlength="16" required placeholder="1 199...">
-                    </div>
-                    <div class="form-group">
-                        <label for="regMemberRole">Member Role / Status:</label>
-                        <select id="regMemberRole">
-                            <option value="Regular Member">Regular Member</option>
-                            <option value="Advisor">Advisor</option>
-                            <option value="Committee Support">Committee Support</option>
-                        </select>
-                    </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Structure Type</h4>
+                    <p class="value" id="displayType">-</p>
                 </div>
-                <button type="submit">Register New Member</button>
-            </form>
-        </div>
-
-        <h2>Registered Members Directory</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Telephone Number</th>
-                    <th>National ID</th>
-                    <th>Role</th>
-                </tr>
-            </thead>
-            <tbody id="membersTableBody">
-                <tr><td colspan="4" style="text-align: center; color: #666;">Loading registered members...</td></tr>
-            </tbody>
-        </table>
-
-        <!-- MODULE 2: MEETING ATTENDANCE ROLL-CALL -->
-        <h2>2. Meeting Roll-Call Attendance</h2>
-        <div class="action-card">
-            <form id="attendanceForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="meetingDate">Meeting Date:</label>
-                        <input type="date" id="meetingDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="attMemberSelect">Select Member:</label>
-                        <select id="attMemberSelect" required>
-                            <option value="">-- Choose Member --</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label for="attStatus">Attendance Status:</label>
-                        <select id="attStatus">
-                            <option value="Present">Present</option>
-                            <option value="Late">Late</option>
-                            <option value="Absent">Absent</option>
-                            <option value="Excused">Excused</option>
-                        </select>
-                    </div>
+                <div class="stat-card">
+                    <h4>Registered Members</h4>
+                    <p class="value" id="totalMembersCount">0</p>
                 </div>
-                <button type="submit">Submit Attendance Log</button>
-            </form>
-        </div>
-
-        <h2>Recent Attendance Records</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Meeting Date</th>
-                    <th>Member Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="attendanceTableBody">
-                <tr><td colspan="3" style="text-align: center; color: #666;">Loading attendance logs...</td></tr>
-            </tbody>
-        </table>
-
-        <!-- MODULE 3: TELEPHONE / MOBILE MONEY SAVINGS -->
-        <h2>3. Telephone Mobile Money Savings Transaction</h2>
-        <div class="action-card">
-            <p style="font-size: 0.9rem; color: #555; margin-top: 0;">Record automated deposits made via member phones (API / Webhook simulated log):</p>
-            <form id="contributionForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="contribMemberSelect">Member Name & Phone:</label>
-                        <select id="contribMemberSelect" required>
-                            <option value="">-- Choose Member --</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="amount">Deposit Amount (RWF):</label>
-                        <input type="number" id="amount" required placeholder="e.g., 2000">
-                    </div>
+                <div class="stat-card">
+                    <h4>Total Phone Savings</h4>
+                    <p class="value" id="totalSavings">0 RWF</p>
                 </div>
-                <button type="submit">Log Telephone Savings Transaction</button>
-            </form>
+                <div class="stat-card">
+                    <h4>Status</h4>
+                    <p class="value" style="color: #198754;">Active</p>
+                </div>
+            </div>
+
+            <!-- MODULE 1: MEMBER REGISTRATION -->
+            <h2>1. Register Group Member</h2>
+            <div class="action-card">
+                <form id="memberForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regMemberName">Full Name:</label>
+                            <input type="text" id="regMemberName" required placeholder="e.g., Uwase Aline">
+                        </div>
+                        <div class="form-group">
+                            <label for="regMemberPhone">Telephone Number:</label>
+                            <input type="tel" id="regMemberPhone" required placeholder="078xxxxxxxx">
+                        </div>
+                        <div class="form-group">
+                            <label for="regMemberId">National ID (16 digits):</label>
+                            <input type="text" id="regMemberId" maxlength="16" required placeholder="1 199...">
+                        </div>
+                        <div class="form-group">
+                            <label for="regMemberRole">Member Role / Status:</label>
+                            <select id="regMemberRole">
+                                <option value="Regular Member">Regular Member</option>
+                                <option value="Advisor">Advisor</option>
+                                <option value="Committee Support">Committee Support</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">Register New Member</button>
+                </form>
+            </div>
+
+            <h2>Registered Members Directory</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>Telephone Number</th>
+                        <th>National ID</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody id="membersTableBody">
+                    <tr><td colspan="4" style="text-align: center; color: #666;">Loading registered members...</td></tr>
+                </tbody>
+            </table>
+
+            <!-- MODULE 2: MEETING ATTENDANCE ROLL-CALL -->
+            <h2>2. Meeting Roll-Call Attendance</h2>
+            <div class="action-card">
+                <form id="attendanceForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="meetingDate">Meeting Date:</label>
+                            <input type="date" id="meetingDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="attMemberSelect">Select Member:</label>
+                            <select id="attMemberSelect" required>
+                                <option value="">-- Choose Member --</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="attStatus">Attendance Status:</label>
+                            <select id="attStatus">
+                                <option value="Present">Present</option>
+                                <option value="Late">Late</option>
+                                <option value="Absent">Absent</option>
+                                <option value="Excused">Excused</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">Submit Attendance Log</button>
+                </form>
+            </div>
+
+            <h2>Recent Attendance Records</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Meeting Date</th>
+                        <th>Member Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceTableBody">
+                    <tr><td colspan="3" style="text-align: center; color: #666;">Loading attendance logs...</td></tr>
+                </tbody>
+            </table>
+
+            <!-- MODULE 3: TELEPHONE / MOBILE MONEY SAVINGS -->
+            <h2>3. Telephone Mobile Money Savings Transaction</h2>
+            <div class="action-card">
+                <p style="font-size: 0.9rem; color: #555; margin-top: 0;">Record automated deposits made via member phones (API / Webhook simulated log):</p>
+                <form id="contributionForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contribMemberSelect">Member Name & Phone:</label>
+                            <select id="contribMemberSelect" required>
+                                <option value="">-- Choose Member --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Deposit Amount (RWF):</label>
+                            <input type="number" id="amount" required placeholder="e.g., 2000">
+                        </div>
+                    </div>
+                    <button type="submit">Log Telephone Savings Transaction</button>
+                </form>
+            </div>
+
+            <h2>Telephone Savings Ledger</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Transaction Time</th>
+                        <th>Member Name</th>
+                        <th>Phone Number</th>
+                        <th>Amount (RWF)</th>
+                    </tr>
+                </thead>
+                <tbody id="contributionsTableBody">
+                    <tr><td colspan="4" style="text-align: center; color: #666;">Loading transaction logs...</td></tr>
+                </tbody>
+            </table>
+
+            <!-- EXECUTIVE COMMITTEE -->
+            <h2>Executive Committee Contacts</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>Full Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="execTableBody">
+                    <tr><td colspan="4" style="text-align: center; color: #666;">Fetching leadership roster...</td></tr>
+                </tbody>
+            </table>
         </div>
 
-        <h2>Telephone Savings Ledger</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Transaction Time</th>
-                    <th>Member Name</th>
-                    <th>Phone Number</th>
-                    <th>Amount (RWF)</th>
-                </tr>
-            </thead>
-            <tbody id="contributionsTableBody">
-                <tr><td colspan="4" style="text-align: center; color: #666;">Loading transaction logs...</td></tr>
-            </tbody>
-        </table>
-
-        <!-- EXECUTIVE COMMITTEE -->
-        <h2>Executive Committee Contacts</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Role</th>
-                    <th>Full Name</th>
-                    <th>Phone Number</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody id="execTableBody">
-                <tr><td colspan="4" style="text-align: center; color: #666;">Fetching leadership roster...</td></tr>
-            </tbody>
-        </table>
+        <div id="loginPrompt" style="text-align: center; padding: 3rem 1rem;">
+            <h3>Dashboard Locked</h3>
+            <p style="color: #666;">Please sign in to access the Group Control Dashboard.</p>
+        </div>
     </div>
 
     <footer>
@@ -417,8 +458,45 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_LtpqyKz9mjGt-m0hw0J6VQ_A3VFTkiN';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        const DASHBOARD_PASSWORD = 'TEP2026';
         let activeGroup = '';
         let groupMembersList = [];
+
+        function checkAuthStatus() {
+            const isAuthenticated = localStorage.getItem('tepAuth') === 'true';
+            const contentDiv = document.getElementById('dashboardContent');
+            const loginPrompt = document.getElementById('loginPrompt');
+            const authBtn = document.getElementById('authBtn');
+
+            if (isAuthenticated) {
+                contentDiv.style.display = 'block';
+                loginPrompt.style.display = 'none';
+                authBtn.textContent = 'Sign Out';
+                authBtn.className = 'auth-btn logout';
+                initDashboard();
+            } else {
+                contentDiv.style.display = 'none';
+                loginPrompt.style.display = 'block';
+                authBtn.textContent = 'Sign In';
+                authBtn.className = 'auth-btn';
+            }
+        }
+
+        function toggleAuth() {
+            const isAuthenticated = localStorage.getItem('tepAuth') === 'true';
+            if (isAuthenticated) {
+                localStorage.removeItem('tepAuth');
+                checkAuthStatus();
+            } else {
+                const enteredPassword = prompt('Enter dashboard password:');
+                if (enteredPassword === DASHBOARD_PASSWORD) {
+                    localStorage.setItem('tepAuth', 'true');
+                    checkAuthStatus();
+                } else if (enteredPassword !== null) {
+                    alert('Incorrect password.');
+                }
+            }
+        }
 
         async function initDashboard() {
             let groupName = localStorage.getItem('activeGroupName');
@@ -442,10 +520,8 @@
 
             activeGroup = groupName;
 
-            // Update Marquee moving words with clean Unicode bullet point
             document.getElementById('marqueeGroupName').textContent = `WELCOME TO ${groupName.toUpperCase()} • TOGETHER WE CAN END POVERTY`;
 
-            // Fetch Group Details
             const { data: groupData } = await supabaseClient
                 .from('group_registrations')
                 .select('*')
@@ -466,7 +542,6 @@
                 `;
             }
 
-            // Set default date for attendance
             document.getElementById('meetingDate').valueAsDate = new Date();
 
             await loadMembers();
@@ -474,7 +549,6 @@
             await loadContributions();
         }
 
-        // --- MEMBERS MANAGEMENT ---
         async function loadMembers() {
             const { data } = await supabaseClient
                 .from('group_members')
@@ -530,7 +604,6 @@
             }
         });
 
-        // --- ATTENDANCE ROLL-CALL ---
         async function loadAttendance() {
             const { data } = await supabaseClient
                 .from('group_attendance')
@@ -575,7 +648,6 @@
             }
         });
 
-        // --- TELEPHONE SAVINGS ---
         async function loadContributions() {
             const { data } = await supabaseClient
                 .from('group_contributions')
@@ -627,7 +699,7 @@
             }
         });
 
-        window.addEventListener('DOMContentLoaded', initDashboard);
+        window.addEventListener('DOMContentLoaded', checkAuthStatus);
     </script>
 </body>
 </html>
