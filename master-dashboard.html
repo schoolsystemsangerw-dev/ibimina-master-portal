@@ -302,6 +302,7 @@
             <li><button onclick="sendActivitiesToGov()">🏛️ Send TEP Activities to Gov</button></li>
             <li><button onclick="viewPerformanceAudit()">📊 Performance Audit (High/Low)</button></li>
             <li><button onclick="printTransactions()">🖨️ Print TEP Transactions</button></li>
+            <li><button onclick="exportToCSV()" class="btn-gold" style="color:#212529;">📁 Export Data to CSV</button></li>
             
             <li class="section-title">Quick Navigation</li>
             <li><a href="index.html">➕ Register New Entity</a></li>
@@ -354,7 +355,8 @@
                     </select>
                 </div>
                 <div class="toolbar-group">
-                    <button class="btn btn-gold" onclick="printTransactions()">📥 Print / Export Report</button>
+                    <button class="btn btn-gold" onclick="exportToCSV()">📥 Export CSV Report</button>
+                    <button class="btn" onclick="printTransactions()">🖨️ Print Report</button>
                 </div>
             </div>
 
@@ -521,7 +523,7 @@
 
         // --- LIVE WEBHOOK DISPATCH TO MAKE.COM ---
         async function sendActivitiesToGov() {
-            let govEmail = prompt("Enter Government Sector or District Official Email Address where reports should be sent:", "schoolsymptoms.ange.rw@gmail.com");
+            let govEmail = prompt("Enter Government Sector or District Official Email Address where reports should be sent:", "schoolsystems.ange.rw@gmail.com");
             
             if (!govEmail || govEmail.trim() === "") return;
             if (!govEmail.includes("@")) {
@@ -602,6 +604,24 @@
 
         function printTransactions() {
             window.print();
+        }
+
+        function exportToCSV() {
+            if (allGroupsData.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,Entity Name,Type,Province,District,Sector,Chairperson Name,Phone\n";
+            allGroupsData.forEach(g => {
+                csvContent += `"${g.group_name}","${g.group_type}","${g.province}","${g.district}","${g.sector}","${g.chair_name}","${g.chair_phone}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "TEP_Regulated_Entities_Report.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function openGroupDashboard(groupName) {
