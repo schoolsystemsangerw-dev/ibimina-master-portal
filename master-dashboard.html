@@ -24,6 +24,48 @@
             display: flex;
             min-height: 100vh;
         }
+        /* AUTHENTICATION OVERLAY MODAL */
+        #authModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 54, 34, 0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .auth-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border-top: 5px solid var(--accent-gold);
+        }
+        .auth-card img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+        }
+        .auth-card h3 {
+            color: var(--primary-green);
+            margin-top: 0;
+        }
+        .auth-card input {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 1rem 0;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
         /* SIDEBAR NAVIGATION */
         aside {
             width: var(--sidebar-width);
@@ -38,14 +80,20 @@
             box-shadow: 4px 0 10px rgba(0,0,0,0.1);
         }
         .sidebar-header {
-            padding: 1.5rem 1rem;
+            padding: 1.2rem 1rem;
             background-color: #0b3d25;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
+        .sidebar-header img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 0.3px;
+        }
         .sidebar-header h2 {
             margin: 0;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--accent-gold);
             letter-spacing: 0.5px;
         }
@@ -270,7 +318,6 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-        /* STRATEGIC PLAN SECTION STYLES */
         .strategy-container {
             display: none;
         }
@@ -333,9 +380,24 @@
 </head>
 <body>
 
+    <!-- PASSWORD AUTHENTICATION OVERLAY MODAL -->
+    <div id="authModal">
+        <div class="auth-card">
+            <img src="together.png" alt="TEP Logo" onerror="this.style.display='none'">
+            <h3>Administrator Sign In</h3>
+            <p style="font-size: 0.85rem; color: #666;">Enter the master password to access the TEP Regulatory Portal.</p>
+            <form onsubmit="handleSignIn(event)">
+                <input type="password" id="masterPasswordInput" placeholder="Enter Password (TEP2026!)" required>
+                <button type="submit" class="btn" style="width: 100%; justify-content: center;">🔒 Sign In</button>
+            </form>
+            <p id="authError" style="color: red; font-size: 0.8rem; margin-top: 0.8rem; display: none;">Incorrect password. Try again.</p>
+        </div>
+    </div>
+
     <!-- LEFT SIDEBAR WITH OFFICIAL REGULATORY ACTIONS -->
     <aside>
         <div class="sidebar-header">
+            <img src="together.png" alt="TEP Logo" onerror="this.style.display='none'">
             <h2>TEP GOVERNANCE</h2>
         </div>
         <ul class="sidebar-menu">
@@ -352,6 +414,9 @@
             <li class="section-title">Quick Navigation</li>
             <li><a href="index.html">➕ Register New Entity</a></li>
             <li><a href="#" onclick="initMasterDashboard()">🔄 Refresh National Data</a></li>
+
+            <li class="section-title">Session Control</li>
+            <li><button onclick="handleSignOut()" class="btn-danger" style="justify-content: center; width: 100%;">🚪 Sign Out</button></li>
 
             <li class="section-title">System Management</li>
             <li><a href="mailto:schoolsystems.ange.rw@gmail.com">🛠️ Contact IT Creator</a></li>
@@ -391,7 +456,7 @@
                     </div>
                 </div>
 
-                <!-- CONTROL TOOLBAR WITH MULTI-TENANT HIERARCHY FILTERS -->
+                <!-- CONTROL TOOLBAR WITH HIERARCHY FILTERS -->
                 <div class="toolbar">
                     <div class="toolbar-group">
                         <input type="text" id="searchInput" placeholder="Search by name or leader..." onkeyup="filterEntities()">
@@ -478,6 +543,40 @@
     </div>
 
     <script>
+        // --- AUTHENTICATION CONFIGURATION ---
+        const MASTER_PASSWORD = "TEP2026!";
+
+        function handleSignIn(e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('masterPasswordInput').value;
+            const errEl = document.getElementById('authError');
+
+            if (inputVal === MASTER_PASSWORD) {
+                sessionStorage.setItem('tep_auth', 'true');
+                document.getElementById('authModal').style.display = 'none';
+                initMasterDashboard();
+            } else {
+                errEl.style.display = 'block';
+            }
+        }
+
+        function handleSignOut() {
+            sessionStorage.removeItem('tep_auth');
+            document.getElementById('masterPasswordInput').value = '';
+            document.getElementById('authError').style.display = 'none';
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const isAuthed = sessionStorage.getItem('tep_auth');
+            if (isAuthed === 'true') {
+                document.getElementById('authModal').style.display = 'none';
+                initMasterDashboard();
+            } else {
+                document.getElementById('authModal').style.display = 'flex';
+            }
+        });
+
         // Initialize Supabase Client
         const SUPABASE_URL = 'https://mdfqgdmcpfnfifpdaqdf.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_LtpqyKz9mjGt-m0hw0J6VQ_A3VFTkiN';
@@ -489,7 +588,6 @@
         async function initMasterDashboard() {
             document.getElementById('sectionTitle').innerHTML = `<span>Regulated Entities Directory</span><span id="recordCount" style="font-size: 0.85rem; color: #666; font-weight: normal;">Showing 0 entities</span>`;
             
-            // Fetch all registered groups/saccos/ibibina
             const { data: groups, error } = await supabaseClient
                 .from('group_registrations')
                 .select('*')
@@ -503,7 +601,6 @@
 
             allGroupsData = groups || [];
 
-            // Fetch all contributions
             const { data: contributions } = await supabaseClient
                 .from('group_contributions')
                 .select('*');
@@ -514,7 +611,6 @@
             allContributionsData.forEach(c => totalSavingsAmount += Number(c.amount));
             document.getElementById('systemSavings').textContent = totalSavingsAmount.toLocaleString() + ' RWF';
 
-            // Populate multi-tenant dropdown filters dynamically
             populateFilterDropdowns();
 
             if (allGroupsData.length === 0) {
@@ -568,7 +664,6 @@
             document.getElementById('stratEntityCount').textContent = entityCount;
             document.getElementById('stratSavingsCount').textContent = totalSavings.toLocaleString() + ' RWF';
 
-            // 2030 Target calculations (500 entities, 100,000,000 RWF)
             let entityProgress = Math.min(Math.round((entityCount / 500) * 100), 100);
             let savingsProgress = Math.min(Math.round((totalSavings / 100000000) * 100), 100);
 
@@ -666,7 +761,6 @@
             }
         }
 
-        // --- DELETE ENTITY FUNCTION ---
         async function deleteEntity(entityId, entityName) {
             if (confirm(`Are you sure you want to delete regulatory registration for "${entityName}"? This will remove the entity and all associated group data permanently.`)) {
                 const { error } = await supabaseClient
@@ -684,7 +778,6 @@
             }
         }
 
-        // --- LIVE WEBHOOK DISPATCH TO MAKE.COM ---
         async function sendActivitiesToGov() {
             let govEmail = prompt("Enter Government Sector or District Official Email Address where reports should be sent:", "schoolsystems.ange.rw@gmail.com");
             
@@ -792,8 +885,6 @@
             localStorage.setItem('activeGroupName', groupName);
             window.location.href = 'group-dashboard.html';
         }
-
-        window.addEventListener('DOMContentLoaded', initMasterDashboard);
     </script>
 </body>
 </html>
