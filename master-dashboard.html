@@ -75,7 +75,7 @@
             transition: background 0.2s, color 0.2s;
             box-sizing: border-box;
         }
-        .sidebar-menu a:hover, .sidebar-menu button:hover {
+        .sidebar-menu a:hover, .sidebar-menu button:hover, .sidebar-menu button.active {
             background-color: rgba(255, 193, 7, 0.2);
             color: var(--accent-gold);
         }
@@ -270,6 +270,47 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        /* STRATEGIC PLAN SECTION STYLES */
+        .strategy-container {
+            display: none;
+        }
+        .strategy-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .strategy-card h3 {
+            margin-top: 0;
+            color: var(--primary-green);
+            font-size: 1.1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 6px;
+            height: 20px;
+            width: 100%;
+            margin: 0.6rem 0 1rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-bar-fill {
+            background-color: var(--primary-green);
+            height: 100%;
+            width: 0%;
+            transition: width 0.6s ease;
+            text-align: right;
+            color: white;
+            font-size: 0.75rem;
+            line-height: 20px;
+            padding-right: 8px;
+            box-sizing: border-box;
+            font-weight: bold;
+        }
         footer {
             background-color: var(--dark-footer);
             color: #cbd5e1;
@@ -298,10 +339,14 @@
             <h2>TEP GOVERNANCE</h2>
         </div>
         <ul class="sidebar-menu">
+            <li class="section-title">Views & Reports</li>
+            <li><button id="navDirBtn" class="active" onclick="switchView('directory')">📂 Regulated Entities</button></li>
+            <li><button id="navStratBtn" onclick="switchView('strategy')">📈 2026-2030 Strategic Metrics</button></li>
+
             <li class="section-title">Regulatory Actions</li>
             <li><button onclick="sendActivitiesToGov()">🏛️ Send TEP Activities to Gov</button></li>
             <li><button onclick="viewPerformanceAudit()">📊 Performance Audit (High/Low)</button></li>
-            <li><button onclick="printTransactions()">🖨️ Print TEP Transactions</button></li>
+            <li><button onclick="printTransactions()">🖨️ Print Report View</button></li>
             <li><button onclick="exportToCSV()" class="btn-gold" style="color:#212529;">📁 Export Data to CSV</button></li>
             
             <li class="section-title">Quick Navigation</li>
@@ -319,67 +364,111 @@
             <div class="marquee-container">
                 <div class="marquee-text">WELCOME TO THE TEP NATIONAL REGULATORY PORTAL &bull; TOGETHER WE CAN END POVERTY &bull; OFFICIAL GOVERNANCE & OVERSIGHT DASHBOARD</div>
             </div>
-            <h1>National Master Regulatory Dashboard</h1>
-            <p>Centralized Official Oversight for All SACCOs and Ibibina Networks</p>
+            <h1 id="headerTitle">National Master Regulatory Dashboard</h1>
+            <p id="headerSubtitle">Centralized Official Oversight for All SACCOs and Ibibina Networks</p>
         </header>
 
         <div class="container">
-            <!-- SYSTEM STATS OVERVIEW -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4>Total Registered Entities</h4>
-                    <p class="value" id="totalEntities">0</p>
+            <!-- VIEW 1: REGULATED ENTITIES DIRECTORY -->
+            <div id="directoryView">
+                <!-- SYSTEM STATS OVERVIEW -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Total Registered Entities</h4>
+                        <p class="value" id="totalEntities">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total SACCOs</h4>
+                        <p class="value" id="totalSaccos">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Ibibina Groups</h4>
+                        <p class="value" id="totalIbibina">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>National System Savings</h4>
+                        <p class="value" id="systemSavings">0 RWF</p>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h4>Total SACCOs</h4>
-                    <p class="value" id="totalSaccos">0</p>
+
+                <!-- CONTROL TOOLBAR WITH MULTI-TENANT HIERARCHY FILTERS -->
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <input type="text" id="searchInput" placeholder="Search by name or leader..." onkeyup="filterEntities()">
+                        <select id="typeFilter" onchange="filterEntities()">
+                            <option value="ALL">All Entity Types</option>
+                            <option value="SACCO">SACCOs Only</option>
+                            <option value="IBIBINA">Ibibina Only</option>
+                        </select>
+                        <select id="provinceFilter" onchange="filterEntities()">
+                            <option value="ALL">All Provinces</option>
+                        </select>
+                        <select id="districtFilter" onchange="filterEntities()">
+                            <option value="ALL">All Districts</option>
+                        </select>
+                        <select id="sectorFilter" onchange="filterEntities()">
+                            <option value="ALL">All Sectors</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-group">
+                        <button class="btn btn-gold" onclick="exportToCSV()">📥 Export CSV</button>
+                        <button class="btn" onclick="printTransactions()">🖨️ Print</button>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <h4>Total Ibibina Groups</h4>
-                    <p class="value" id="totalIbibina">0</p>
-                </div>
-                <div class="stat-card">
-                    <h4>National System Savings</h4>
-                    <p class="value" id="systemSavings">0 RWF</p>
+
+                <h2 id="sectionTitle">
+                    <span>Regulated Entities Directory</span>
+                    <span id="recordCount" style="font-size: 0.85rem; color: #666; font-weight: normal;">Showing 0 entities</span>
+                </h2>
+                
+                <div id="tableContainer">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Entity Name</th>
+                                <th>Type</th>
+                                <th>Jurisdiction (Province / District / Sector)</th>
+                                <th>Leadership Contact</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterTableBody">
+                            <tr><td colspan="5" style="text-align: center; color: #666;">Loading all registered entities from secure database...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- CONTROL TOOLBAR -->
-            <div class="toolbar">
-                <div class="toolbar-group">
-                    <input type="text" id="searchInput" placeholder="Search by name, sector or leader..." onkeyup="filterEntities()">
-                    <select id="typeFilter" onchange="filterEntities()">
-                        <option value="ALL">All Entity Types</option>
-                        <option value="SACCO">SACCOs Only</option>
-                        <option value="IBIBINA">Ibibina Only</option>
-                    </select>
+            <!-- VIEW 2: 2026-2030 STRATEGIC PLAN METRICS -->
+            <div id="strategyView" class="strategy-container">
+                <h2 style="margin-top:0;"><span>TEP 5-Year Strategic Plan Metrics (2026–2030)</span></h2>
+                <p style="color: #555; margin-bottom: 1.5rem;">Official alignment tracking for sector and district local government review, monitoring poverty reduction goals and financial inclusion benchmarks.</p>
+                
+                <div class="strategy-card">
+                    <h3>Pillar 1: Community Financial Inclusion & Cooperative Scale</h3>
+                    <p><strong>2030 National Target:</strong> 500 Registered Community SACCOs & Ibibina Networks.</p>
+                    <p>Current Active Registrations: <span id="stratEntityCount" style="font-weight: bold; color: var(--primary-green);">0</span></p>
+                    <label>Progress Toward 2030 Target:</label>
+                    <div class="progress-bar-container">
+                        <div id="entityProgressBar" class="progress-bar-fill">0%</div>
+                    </div>
                 </div>
-                <div class="toolbar-group">
-                    <button class="btn btn-gold" onclick="exportToCSV()">📥 Export CSV Report</button>
-                    <button class="btn" onclick="printTransactions()">🖨️ Print Report</button>
-                </div>
-            </div>
 
-            <h2 id="sectionTitle">
-                <span>Regulated Entities Directory</span>
-                <span id="recordCount" style="font-size: 0.85rem; color: #666; font-weight: normal;">Showing 0 entities</span>
-            </h2>
-            
-            <div id="tableContainer">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Entity Name</th>
-                            <th>Type</th>
-                            <th>Jurisdiction (Province / District / Sector)</th>
-                            <th>Leadership Contact</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="masterTableBody">
-                        <tr><td colspan="5" style="text-align: center; color: #666;">Loading all registered entities from secure database...</td></tr>
-                    </tbody>
-                </table>
+                <div class="strategy-card">
+                    <h3>Pillar 2: Capital Mobilization & Household Resilience</h3>
+                    <p><strong>2030 National Target:</strong> 100,000,000 RWF in aggregate community savings.</p>
+                    <p>Current System Savings: <span id="stratSavingsCount" style="font-weight: bold; color: var(--primary-green);">0 RWF</span></p>
+                    <label>Progress Toward Capital Milestone:</label>
+                    <div class="progress-bar-container">
+                        <div id="savingsProgressBar" class="progress-bar-fill">0%</div>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <h3>Pillar 3: Governance & Sector Compliance (2026 Milestone)</h3>
+                    <p><strong>Current Status:</strong> Active digital logging, automated webhook audits, and multi-tenant sector reporting fully operational across participating regions.</p>
+                    <button class="btn" onclick="sendActivitiesToGov()">🏛️ Transmit Strategic Report to District Authority</button>
+                </div>
             </div>
         </div>
 
@@ -425,11 +514,15 @@
             allContributionsData.forEach(c => totalSavingsAmount += Number(c.amount));
             document.getElementById('systemSavings').textContent = totalSavingsAmount.toLocaleString() + ' RWF';
 
+            // Populate multi-tenant dropdown filters dynamically
+            populateFilterDropdowns();
+
             if (allGroupsData.length === 0) {
                 document.getElementById('masterTableBody').innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666;">No SACCOs or Ibibina registered yet in the national network.</td></tr>`;
                 document.getElementById('totalEntities').textContent = '0';
                 document.getElementById('totalSaccos').textContent = '0';
                 document.getElementById('totalIbibina').textContent = '0';
+                updateStrategicMetrics(0, 0);
                 return;
             }
 
@@ -445,7 +538,47 @@
             document.getElementById('totalSaccos').textContent = saccosCount;
             document.getElementById('totalIbibina').textContent = ibibinaCount;
 
+            updateStrategicMetrics(allGroupsData.length, totalSavingsAmount);
             renderTable(allGroupsData);
+        }
+
+        function populateFilterDropdowns() {
+            const provinces = [...new Set(allGroupsData.map(g => g.province).filter(Boolean))];
+            const districts = [...new Set(allGroupsData.map(g => g.district).filter(Boolean))];
+            const sectors = [...new Set(allGroupsData.map(g => g.sector).filter(Boolean))];
+
+            const provSelect = document.getElementById('provinceFilter');
+            const distSelect = document.getElementById('districtFilter');
+            const sectSelect = document.getElementById('sectorFilter');
+
+            let currentProv = provSelect.value;
+            let currentDist = distSelect.value;
+            let currentSect = sectSelect.value;
+
+            provSelect.innerHTML = '<option value="ALL">All Provinces</option>' + provinces.map(p => `<option value="${p}">${p}</option>`).join('');
+            distSelect.innerHTML = '<option value="ALL">All Districts</option>' + districts.map(d => `<option value="${d}">${d}</option>`).join('');
+            sectSelect.innerHTML = '<option value="ALL">All Sectors</option>' + sectors.map(s => `<option value="${s}">${s}</option>`).join('');
+
+            if (provinces.includes(currentProv)) provSelect.value = currentProv;
+            if (districts.includes(currentDist)) distSelect.value = currentDist;
+            if (sectors.includes(currentSect)) sectSelect.value = currentSect;
+        }
+
+        function updateStrategicMetrics(entityCount, totalSavings) {
+            document.getElementById('stratEntityCount').textContent = entityCount;
+            document.getElementById('stratSavingsCount').textContent = totalSavings.toLocaleString() + ' RWF';
+
+            // 2030 Target calculations (500 entities, 100,000,000 RWF)
+            let entityProgress = Math.min(Math.round((entityCount / 500) * 100), 100);
+            let savingsProgress = Math.min(Math.round((totalSavings / 100000000) * 100), 100);
+
+            const entBar = document.getElementById('entityProgressBar');
+            entBar.style.width = entityProgress + '%';
+            entBar.textContent = entityProgress + '%';
+
+            const savBar = document.getElementById('savingsProgressBar');
+            savBar.style.width = savingsProgress + '%';
+            savBar.textContent = savingsProgress + '%';
         }
 
         function renderTable(dataArray) {
@@ -454,7 +587,7 @@
             if (countEl) countEl.textContent = `Showing ${dataArray.length} entities`;
 
             if (dataArray.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666;">No matching entities found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #666;">No matching entities found for this administrative filter.</td></tr>`;
                 return;
             }
 
@@ -485,11 +618,12 @@
         function filterEntities() {
             const searchVal = document.getElementById('searchInput').value.toLowerCase();
             const typeVal = document.getElementById('typeFilter').value;
+            const provVal = document.getElementById('provinceFilter').value;
+            const distVal = document.getElementById('districtFilter').value;
+            const sectVal = document.getElementById('sectorFilter').value;
 
             const filtered = allGroupsData.filter(g => {
                 const matchesSearch = g.group_name.toLowerCase().includes(searchVal) ||
-                                      g.sector.toLowerCase().includes(searchVal) ||
-                                      g.district.toLowerCase().includes(searchVal) ||
                                       g.chair_name.toLowerCase().includes(searchVal);
                 
                 const isSacco = g.group_type && g.group_type.toLowerCase().includes('sacco');
@@ -497,10 +631,39 @@
                 if (typeVal === 'SACCO') matchesType = isSacco;
                 if (typeVal === 'IBIBINA') matchesType = !isSacco;
 
-                return matchesSearch && matchesType;
+                let matchesProv = (provVal === 'ALL' || g.province === provVal);
+                let matchesDist = (distVal === 'ALL' || g.district === distVal);
+                let matchesSect = (sectVal === 'ALL' || g.sector === sectVal);
+
+                return matchesSearch && matchesType && matchesProv && matchesDist && matchesSect;
             });
 
             renderTable(filtered);
+        }
+
+        function switchView(viewName) {
+            const dirView = document.getElementById('directoryView');
+            const stratView = document.getElementById('strategyView');
+            const dirBtn = document.getElementById('navDirBtn');
+            const stratBtn = document.getElementById('navStratBtn');
+            const headerTitle = document.getElementById('headerTitle');
+            const headerSubtitle = document.getElementById('headerSubtitle');
+
+            if (viewName === 'directory') {
+                dirView.style.display = 'block';
+                stratView.style.display = 'none';
+                dirBtn.classList.add('active');
+                stratBtn.classList.remove('active');
+                headerTitle.textContent = "National Master Regulatory Dashboard";
+                headerSubtitle.textContent = "Centralized Official Oversight for All SACCOs and Ibibina Networks";
+            } else {
+                dirView.style.display = 'none';
+                stratView.style.display = 'block';
+                stratBtn.classList.add('active');
+                dirBtn.classList.remove('active');
+                headerTitle.textContent = "TEP 5-Year Strategic Plan (2026–2030)";
+                headerSubtitle.textContent = "National Targets, Core Pillars & Government Oversight Metrics";
+            }
         }
 
         // --- DELETE ENTITY FUNCTION ---
@@ -535,7 +698,7 @@
 
             let payload = {
                 recipient_email: govEmail,
-                system_name: "TEP National Regulatory Portal",
+                system_name: "TEP National Regulatory Portal & Strategic Metrics",
                 total_entities: allGroupsData.length,
                 total_contributions_records: allContributionsData.length,
                 entities: allGroupsData,
@@ -551,7 +714,7 @@
                 });
 
                 if (response.ok) {
-                    alert(`Success! TEP activities report has been securely transmitted and dispatched via Webhook to: ${govEmail}`);
+                    alert(`Success! TEP activities and strategic report have been securely transmitted via Webhook to: ${govEmail}`);
                 } else {
                     alert("The webhook responded with an error. Please verify your Make.com scenario is running.");
                 }
@@ -562,6 +725,7 @@
         }
 
         function viewPerformanceAudit() {
+            switchView('directory');
             let groupPerformance = allGroupsData.map(g => {
                 let groupContribs = allContributionsData.filter(c => c.group_name === g.group_name);
                 let total = groupContribs.reduce((sum, c) => sum + Number(c.amount), 0);
